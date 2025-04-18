@@ -1,0 +1,80 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to
+
+
+# SereneMind Project Rules for Cursor AI
+
+## Project Structure & Architecture
+1. **Architecture Rule**: Follow **Clean Architecture** – separate code into `presentation`, `domain`, and `data` layers.
+2. **State Management**: Use **BLoC** for all reactive components and UI state updates. No setState unless inside widgets with local state only (e.g., animations, switches).
+3. **Modularization**: Every feature/module (e.g., Session, Progress, Rewards, Community) must reside in its own folder with `bloc`, `models`, `views`, and `repository`.
+
+## Data Management Rules
+
+### Local Storage
+4. Use **`path_provider`** and **`dio` or `http`** to download and save videos, images, and background music to internal storage.
+5. Store media in a `serenemind` folder under device storage. Filenames must be hash-safe and follow `pose_<id>.mp4`, `bgm_<name>.mp3`, etc.
+6. On first app launch, check for media file presence locally before streaming/downloading.
+
+### Firebase
+7. **Firestore**:
+   - Store user metadata, achievements, progress, and community posts.
+   - Use a **normalized structure** with `users/{userId}` and `community/{postId}`.
+
+8. **Firebase Storage**:
+   - Host yoga pose images and videos for remote access before local caching.
+   - Use signed URLs or download tokens with expiry checks when needed.
+
+9. **Authentication**:
+   - Use Firebase Auth with email/password and optional Google sign-in.
+
+## Naming Conventions
+10. Use camelCase for variables and function names (e.g., `userScore`, `fetchYogaPose()`).
+11. Use PascalCase for class names (e.g., `YogaSessionBloc`, `CommunityModel`).
+12. File naming should follow `snake_case` (e.g., `session_page.dart`, `leaderboard_bloc.dart`).
+
+## Testing & Debugging
+13. Every BLoC must include a corresponding **unit test** file under `/test/bloc/`.
+14. Use **Flutter DevTools** for performance monitoring.
+15. Include debug logs for Firebase reads/writes using `logger` package. Disable in release mode.
+
+## Security & Validation
+16. Use **Firestore rules** to restrict:
+   - Users from modifying other users’ data.
+   - Credits and rewards redemption logic to trusted backend functions.
+
+17. Validate all form inputs (e.g., post content, login) before writing to Firestore.
+
+## UI/UX Consistency
+18. Design must follow Figma prototypes.
+19. Reuse `SereneMindTheme` for consistent colors, typography, shadows.
+20. All widgets must be **responsive** using MediaQuery or `LayoutBuilder`.
+
+## Offline Capability & Syncing
+21. Enable **offline persistence** for Firestore.
+22. Sync progress data when device is back online.
+23. Cache community posts locally with expiry (e.g., 24 hours).
+
+## Gamification Logic
+24. Score increases by +10 per pose/session completion.
+25. Credits are **only** earned through partner yoga. Logic must validate both users participated.
+26. User levels increase every 100 score points; level name must update accordingly.
+
+## Community & Content Management
+27. Community posts support text, images (1 per post max).
+28. Users can like/dislike and comment on posts. Store all interactions with user ID reference.
+29. Allow post reporting; store reports in `moderation_reports/` with timestamps.
+
+## Code Commit Rules
+30. All commits must:
+   - Be descriptive (e.g., `feat: add scoring logic for partner yoga`)
+   - Pass lint checks (`flutter analyze`)
+   - Include test coverage for business logic
